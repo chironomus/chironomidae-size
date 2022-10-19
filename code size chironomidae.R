@@ -257,11 +257,16 @@ size=data[,c(2,6)]
 binnedSamples <- cut(data$wl, breaks = c(0,1000,2000,3000,4000,5000,6000) )#intervals of coordinates
 data$interval.w=binnedSamples
 size=data[,c(2,14)]
+
 size$int=as.numeric(size$interval.w)
-size[is.na(size)] <- 0
+
+size$int[is.na(size$int)] = 0
+
+
 #list with interval brakes
 test <- setNames(size$int, size$name)#generate named vector required for contmp
 body.size<-as.data.frame(data)[,6] #choosing the 3rd column of dataset X2#
+
 
 #create a reconstruction of ancestral character state for size
 obj<-contMap(x,test,plot=FALSE)
@@ -346,6 +351,26 @@ size3=size_temp1
 mb1=mblm(wl~Lat1_cor,data=size3)
 summary (mb1)
 #extract individual genera as separate datasets
+remove_outliers<-function(x){
+  qnt<- quantile( x,probs=0.99 )
+  x[ x>qnt ]<- NA
+  return(x)
+}
+
+# assuming your data.frame is called mdf
+mk<- with(size3,
+            by(size3, Group.4,
+               function(x) mk.test(size3$wl)))
+
+tidy<- with(size3,
+          by(size3, Group.4,
+             function(x) mblm(wl~Lat1_cor,data=x)))
+
+sapply(tidy,coef)
+
+mk_Micropsectra=tidy(mk.test(Micropsectra$wl))
+tidy_Micropsectra=tidy(mblm(wl~Lat1_cor,data=Micropsectra))
+
 Cricotopus=subset(size3,Group.4=="Cricotopus")#1
 Cricotopus=Cricotopus[order(-Cricotopus$Lat1_cor), ]#order by latitude (normalized) to allow mk test on the wl~lat
 Dicrotendipes=subset(size3,Group.4=="Dicrotendipes")#2

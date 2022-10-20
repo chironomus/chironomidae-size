@@ -213,7 +213,8 @@ mod.gls.1.1 <- update(md1, correlation=corARMA(p=1))#best fit
 #mod.gls.0 <- update(md1, correlation=NULL)
 #anova(md1, mod.gls.3, mod.gls.1.1,mod.gls.0) # AR(2) vs AR(1)
 an2=Anova(mod.gls.1.1)#anova on the best fit model with latitude
-
+plot(density(resid(md1, type='pearson')))
+lines(density(resid(mod.gls.1.1, type='pearson')), col='red')
 
 #########################################
 # 3) ANALYSIS OF PHYLOGENETIC PATTERNS
@@ -351,13 +352,7 @@ size3=size_temp1
 mb1=mblm(wl~Lat1_cor,data=size3)
 summary (mb1)
 #extract individual genera as separate datasets
-remove_outliers<-function(x){
-  qnt<- quantile( x,probs=0.99 )
-  x[ x>qnt ]<- NA
-  return(x)
-}
 
-# assuming your data.frame is called mdf
 mk<- with(size3,
             by(size3, Group.4,
                function(x) mk.test(size3$wl)))
@@ -368,8 +363,6 @@ tidy<- with(size3,
 
 sapply(tidy,coef)
 
-mk_Micropsectra=tidy(mk.test(Micropsectra$wl))
-tidy_Micropsectra=tidy(mblm(wl~Lat1_cor,data=Micropsectra))
 
 Cricotopus=subset(size3,Group.4=="Cricotopus")#1
 Cricotopus=Cricotopus[order(-Cricotopus$Lat1_cor), ]#order by latitude (normalized) to allow mk test on the wl~lat

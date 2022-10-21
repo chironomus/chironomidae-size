@@ -216,6 +216,8 @@ an2=Anova(mod.gls.1.1)#anova on the best fit model with latitude
 plot(density(resid(md1, type='pearson')))
 lines(density(resid(mod.gls.1.1, type='pearson')), col='red')
 
+#testing git commits
+
 #########################################
 # 3) ANALYSIS OF PHYLOGENETIC PATTERNS
 

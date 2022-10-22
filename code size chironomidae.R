@@ -283,7 +283,8 @@ axis(1)
 title(xlab="Time from the root")
 #calculate correlation between the trait distribution (size) and phylogenetic structure
 phylosig(x,body.size,method="lambda",test=TRUE)
-
+phenogram(x, test, spread.labels = TRUE)
+fancyTree(x, type = "phenogram95", x = type)
 #########################################
 #4 ANALYSIS OF THE WING LENGTH RELATION WITH MEAN ANNUAL TEMPERATURE
 #load dataset with bioclimatic variables including mean annual temperature. Bioclimatic vars. from https://worldclim.org/

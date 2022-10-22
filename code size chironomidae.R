@@ -158,6 +158,48 @@ library("rnaturalearth")
 library("rnaturalearthdata")
 library(mapview)
 require(sf)
+######################################
+#simulate a tree for the descreete characters Ancestral character states
+## set seed for reproducibility
+set.seed(100)
+## load phytools
+library(phytools)
+## simulate a tree & some data
+tree <- pbtree(n = 26, scale = 1)
+tree$tip.label <- LETTERS[26:1]
+x <- fastBM(tree)
+## let's try & write down the likelihood function we want
+C <- vcvPhylo(tree)
+pp <- rep(1, tree$Nnode + 1)
+lik <- function(pp, C, x) -sum(dmnorm(c(x, pp[3:length(pp)]), rep(pp[2], nrow(C)), 
+                                      pp[1] * C, log = TRUE))
+tt <- setNames(c(1, rep(mean(x), tree$Nnode)), c("sig2", 1:tree$Nnode + length(tree$tip)))
+require(mnormt)
+RR <- optim(tt, lik, C = C, x = x, method = "L-BFGS-B", lower = c(1e-06, rep(-Inf, 
+                                                                             tree$Nnode)))
+print(RR)
+A<- matrix(c(-2, 1, 1, 1, -2, 4,4,-2,3,5,6,1, 1, 1, -2), 5, 5)
+colnames(A) <- rownames(A) <- letters[1:5]
+y<- sim.history(tree, Q, anc = "a")$states
+print(y)
+## simulate discrete character data
+Q <- matrix(c(-2, 1, 1, 1, -2, 1, 1, 1, -2), 3, 3)
+colnames(Q) <- rownames(Q) <- letters[1:3]
+x <- sim.history(tree, Q, anc = "a")$states
+print(x)
+plotTree(tree, setEnv = TRUE, offset = 0.5)
+
+## estimate ancestral states under a ER model
+fitER <- rerootingMethod(tree, x, model = "ER")
+print(fitER)
+## setEnv=TRUE is experimental. please be patient with bugs
+nodelabels(node = as.numeric(rownames(fitER$marginal.anc)), pie = fitER$marginal.anc, 
+           piecol = c("blue", "red", "yellow"), cex = 0.6)
+tiplabels(pie = to.matrix(x, sort(unique(x))), piecol = c("blue", "red", "yellow"), 
+          cex = 0.3)
+
+
+
 
 #########################################
 

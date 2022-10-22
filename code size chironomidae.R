@@ -276,6 +276,10 @@ obj<-contMap(x,test,plot=FALSE)
 #plot reconstruction on a tree
 tr=plot(obj,type="phylogram",leg.txt="wing length (mm)",lwd=2,
         mar=c(4,2,4,2))
+obj1=obj
+drop.tip.contMap(obj1, tip)
+tr1=plot(obj,type="fan",leg.txt="wing length (mm)",lwd=2,
+        mar=c(4,2,4,2),tiplabels=FALSE)
 #write.tree(x, file="100bs_tr19042021.tre") #save the tree
 #adjust the tree plot
 title(main="Chironomidae phylogenetic tree")
